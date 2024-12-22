@@ -1,0 +1,59 @@
+
+name: Create Azure Data Factory
+
+on:
+  workflow_dispatch:
+    inputs:
+      adf_name:
+        description: "Name of the Azure Data Factory"
+        required: true
+        type: string
+      resource_group_name:
+        description: "Name of the Azure resource group"
+        required: true
+        type: string
+      location:
+        description: "Azure region for the Data Factory"
+        required: true
+        type: string
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Login to Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Step 3: Setup Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0
+
+      # Step 4: Initialize Terraform
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 5: Terraform Plan
+      - name: Terraform Plan
+        run: |
+          terraform plan \
+            -var "adf_name=${{ github.event.inputs.adf_name }}" \
+            -var "resource_group_name=${{ github.event.inputs.resource_group_name }}" \
+            -var "location=${{ github.event.inputs.location }}"
+
+      # Step 6: Terraform Apply
+      - name: Terraform Apply
+        run: |
+          terraform apply -auto-approve \
+            -var "adf_name=${{ github.event.inputs.adf_name }}" \
+            -var "resource_group_name=${{ github.event.inputs.resource_group_name }}" \
+            -var "location=${{ github.event.inputs.location }}"
