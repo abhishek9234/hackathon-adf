@@ -42,13 +42,13 @@ jobs:
         id: set_env_vars
         run: |
           if [[ "${{ github.event.inputs.environment }}" == "development" ]]; then
-            echo "RESOURCE_GROUP=my-dev-rg" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=dev-resource-group" >> $GITHUB_ENV
             echo "LOCATION=East US" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
-            echo "RESOURCE_GROUP=my-staging-rg" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=stg-resource-group" >> $GITHUB_ENV
             echo "LOCATION=West US" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
-            echo "RESOURCE_GROUP=my-prod-rg" >> $GITHUB_ENV
+            echo "RESOURCE_GROUP=prod-resource-group" >> $GITHUB_ENV
             echo "LOCATION=Central US" >> $GITHUB_ENV
           else
             echo "Invalid environment selected!" >&2
