@@ -11,7 +11,7 @@ on:
           - development
           - staging
           - production
-      adf_name:
+      resource_name:
         description: "Name of the Azure Data Factory"
         required: true
         type: string
@@ -63,7 +63,7 @@ jobs:
       - name: Terraform Plan
         run: |
           terraform plan \
-            -var "adf_name=${{ github.event.inputs.adf_name }}" \
+            -var "adf_name=${{ github.event.inputs.resource_name }}" \
             -var "resource_group_name=${{ env.RESOURCE_GROUP }}" \
             -var "location=${{ env.LOCATION }}"
 
@@ -71,6 +71,6 @@ jobs:
       - name: Terraform Apply
         run: |
           terraform apply -auto-approve \
-            -var "adf_name=${{ github.event.inputs.adf_name }}" \
+            -var "adf_name=${{ github.event.inputs.resource_name }}" \
             -var "resource_group_name=${{ env.RESOURCE_GROUP }}" \
             -var "location=${{ env.LOCATION }}"

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trigger GitHub Action</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, select, button {
+      margin-top: 5px;
+      padding: 10px;
+      width: 100%;
+      max-width: 400px;
+    }
+    button {
+      cursor: pointer;
+      background-color: #007bff;
+      color: white;
+      border: none;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Trigger GitHub Actions Workflow</h1>
+  <form id="triggerForm">
+    <label for="environment">Select Environment:</label>
+    <select id="environment" name="environment" required>
+      <option value="dev">Development</option>
+      <option value="staging">Staging</option>
+      <option value="prod">Production</option>
+    </select>
+
+    <label for="resource">Resource to Deploy:</label>
+    <select id="resource" name="resource" required>
+      <option value="storage-account">Storage Account</option>
+      <option value="adf">Azure Data Factory</option>
+    </select>
+
+    <label for="resource-name">Resource Name:</label>
+    <input type="text" id="resource-name" name="resource-name" placeholder="Enter resource name" required>
+
+    <label for="token">GitHub Personal Access Token:</label>
+    <input type="password" id="token" name="token" placeholder="Enter your token" required>
+
+    <button type="submit">Trigger Workflow</button>
+  </form>
+
+  <div id="response" style="margin-top: 20px;"></div>
+
+  <script>
+    document.getElementById('triggerForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const token = document.getElementById('token').value;
+      const environment = document.getElementById('environment').value;
+      const resource = document.getElementById('resource').value;
+      const resourceName = document.getElementById('resource-name').value;
+
+      let repo, workflow;
+
+      if (resource === 'storage-account') {
+        repo = 'abhishek9234/hackthon-sa';
+        workflow = 'azure_storage.yml';
+      } else if (resource === 'adf') {
+        repo = 'abhishek9234/hackathon-adf';
+        workflow = 'createadf.yml';
+      } else {
+        document.getElementById('response').innerHTML = `<p style="color: red;">Invalid resource selection.</p>`;
+        return;
+      }
+
+      const url = `https://api.github.com/repos/${repo}/actions/workflows/${workflow}/dispatches`;
+
+      const responseDiv = document.getElementById('response');
+      responseDiv.innerHTML = 'Triggering workflow...';
+
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Accept': 'application/vnd.github.v3+json',
+          },
+          body: JSON.stringify({
+            ref: 'main', // Replace with the branch you want to trigger the workflow on
+            inputs: {
+              environment: environment,
+              resource_name: resourceName,
+            },
+          }),
+        });
+
+        if (response.ok) {
+          responseDiv.innerHTML = `<p style="color: green;">Workflow triggered successfully!</p>`;
+        } else {
+          const error = await response.json();
+          responseDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
+      } catch (error) {
+        responseDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+      }
+    });
+  </script>
+</body>
+</html>
