@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to deploy to (development, staging, production)"
+        description: "Environment to deploy to (dev, staging, production)"
         required: true
         type: choice
         options:
-          - development
+          - dev
           - staging
           - production
       resource_name:
@@ -41,7 +41,7 @@ jobs:
       - name: Set Environment-Specific Variables
         id: set_env_vars
         run: |
-          if [[ "${{ github.event.inputs.environment }}" == "development" ]]; then
+          if [[ "${{ github.event.inputs.environment }}" == "dev" ]]; then
             echo "RESOURCE_GROUP=dev-resource-group" >> $GITHUB_ENV
             echo "LOCATION=East US" >> $GITHUB_ENV
           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
