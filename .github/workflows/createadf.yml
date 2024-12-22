@@ -4,13 +4,13 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: "Environment to deploy to (dev, staging, production)"
+        description: "Environment to deploy to (dev, staging, prod)"
         required: true
         type: choice
         options:
           - dev
           - staging
-          - production
+          - prod
       resource_name:
         description: "Name of the Azure Data Factory"
         required: true
@@ -47,7 +47,7 @@ jobs:
           elif [[ "${{ github.event.inputs.environment }}" == "staging" ]]; then
             echo "RESOURCE_GROUP=stg-resource-group" >> $GITHUB_ENV
             echo "LOCATION=West US" >> $GITHUB_ENV
-          elif [[ "${{ github.event.inputs.environment }}" == "production" ]]; then
+          elif [[ "${{ github.event.inputs.environment }}" == "prod" ]]; then
             echo "RESOURCE_GROUP=prod-resource-group" >> $GITHUB_ENV
             echo "LOCATION=Central US" >> $GITHUB_ENV
           else
