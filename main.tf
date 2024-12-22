@@ -28,7 +28,4 @@ resource "azurerm_data_factory" "example" {
     type = "SystemAssigned"
   }
 
-  tags = {
-    Environment = "Development"
-  }
 }
